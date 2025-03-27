@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>RSI Speedrun</title>
+
+  <script src="vue.global.min.js"></script>
+
+  <style>
+
+    /* Import the JetBrains Mono font */
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('./jetbrainsMono.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    /* Apply some basic styles */
+    body {
+      margin: 0;
+      background-color: black;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      -webkit-tap-highlight-color: transparent;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Center the content */
+    #app {
+      text-align: center;
+    }
+
+    /* Style the clickable area */
+    .clickable {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 70px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Style the time remaining text */
+    .timeLeft {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+    }
+
+    /* The High Score Display */
+    .highScore {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    } 
+
+   /* The restart paragraph */
+   .restartParagraph {
+      padding-top: 20px;
+      font-size: 18px; 
+      color: pink;
+   }
+
+   /* The Final Message Span */
+   .finalMessageSpan {
+      color: yellow; font-size: 30px;
+   } 
+
+    /* The Hidden Class */
+    .hidden {
+      opacity: 0; 
+    }
+
+    /* The visible class */
+    .visible {
+      transition: opacity 3s ease-in-out;
+      opacity: 1;
+    }
+
+    /* The v-cloak directive */
+    [v-cloak] {
+      display: none;
+    }
+
+  </style>
+  
+</head>
+
+<!-- The Main Body of the Page -->
+<body>
+
+  <!-- The Main Vue App -->
+  <div id="app" v-cloak>
+
+    <!-- The Clickable Area Which Handles Clicks-->
+    <div class="clickable" @click="handleClick">
+
+    <!-- The Count Display -->
+    <div v-if="timerActive" style="font-size: 200px;">{{ count }}</div>
+
+    <!-- The Initial Message -->
+    <div v-if="!timerActive && !timerStarted">
+
+         <!-- The Intro Message -->
+        <pre style="font-size: 30px;" id="initialMessage" v-if="highScore === 0">
+
+Do you think you have REAL ULTIMATE ENDURANCE?
+Or are you a tiny baby with no skills?
+The only way to find out is with this game.
+Click like a HAXXOR for 10 seconds.
+
+        </pre>
+
+        <div style="font-size: 200px;" id="initialZero" v-if="highScore > 0">0</div>
+
+     </div>
+
+      <!-- The Final Message Area -->
+      <div v-if="!timerActive && timerStarted">Final count: {{ count }} <br>
+
+        <!-- The Final Message -->
+        <span class="finalMessageSpan">{{ finalMessage }} </span>
+
+         <p class="hidden restartParagraph" id="restartText">( Right click to restart )</p>
+
+      </div> 
+
+    </div>
+
+    <!-- The Time Remaining Display While the Game Runs -->
+    <div v-if="timerActive" class="timeLeft">Time remaining: {{ timeLeft }}</div>
+
+    <!-- High Score Display -->
+    <div v-if="highScore > 0" class="highScore">High Score: {{ highScore }}</div>
+
+  </div>
+
+  <!-- The Main JavaScript and Vue Code -->
+  <script>
+
+    // Reload the page if the right mouse button is pressed
+    document.addEventListener( 'contextmenu', function( event ) {
+
+        // Prevent the context menu from actually opening
+        event.preventDefault();
+
+        // Refresh the page
+        location.reload();
+
+    } );
+
+    // Create the Vue App
+    const { createApp } = Vue;
+
+    // Mount and create the App
+    createApp( {
+
+      // The Data for the App
+      data() {
+
+        // Return the initial data
+        return {
+
+          // The count of clicks
+          count: 0,
+
+          // The timer state
+          timerActive: false,
+
+          // The timer started state
+          timerStarted: false,
+
+          // Set the time left value to 10
+          timeLeft: 10,
+
+          // The timer interval
+          timerInterval: null,
+
+          // Set the high score to 0 by default
+          highScore: 0
+
+        };
+
+      },
+
+      // The Methods for the App
+      methods: {
+
+        // Handle the Click Event
+        handleClick() {
+
+          // If the timer has not started, start it
+          if ( !this.timerStarted ) {
+
+            // Start the timer
+            this.startTimer();
+
+          }
+
+          // If the timer is active, increment the count
+          if ( this.timerActive ) {
+
+            // Increment the count
+            this.increment();
+
+          }
+
+        },
+
+        // Increment the Count
+        increment() {
+
+          // Increment the count
+          this.count++;
+
+        },
+
+        // Start the Timer
+        startTimer() {
+
+          // Set the timer started state to true
+          this.timerStarted = true;
+
+          // Set the timer active state to true
+          this.timerActive = true;
+
+          // Start the interval to update the timeLeft
+          this.timerInterval = setInterval( () => {
+
+            // If there is time left, decrement it
+            if ( this.timeLeft > 0 ) {
+
+              // Decrement the time left by one second
+              this.timeLeft--;
+
+            } 
+            
+            // Else stop the timer
+            else {
+
+              // Set the timer active state to false
+              this.timerActive = false;
+
+              // Clear the interval
+              clearInterval( this.timerInterval );
+
+              // If the count is greater than the high score, set the high score to session storage and update the high score
+              if ( this.count > this.highScore ) {
+    
+                // Set the high score to the count
+                this.highScore = this.count;
+
+                // Set the new high score onto session storage
+                sessionStorage.setItem( 'rsiHighScore', this.highScore );
+
+              }
+
+              // Wait 2 seconds, then add the "visible" class to fade in the text
+              setTimeout( () => {
+
+                // Add the visible class to the restart text
+                document.getElementById( 'restartText' ).classList.add( 'visible' );
+
+              }, 2000);
+
+            }
+
+          }, 1000 );
+
+        }
+
+      },
+
+      // The Computed Properties for the App
+      computed: {
+
+          // The final game message
+          finalMessage() {
+
+            if (this.count >= 130) return "JOO IS HAXXORS!!";
+            if (this.count >= 110) return "oh my god!";
+            if (this.count >= 100) return "you kick more ass than the matrix";
+            if (this.count >= 90) return "i'm starting to think you cheated";
+            if (this.count >= 80) return "they must call you bionic finger!";
+            if (this.count >= 70) return "good job! you are likely alive!";
+            if (this.count >= 50) return "not too bad for a windows user";
+            if (this.count >= 30) return "you suck somewhat less than a vacuum";
+            if (this.count >= 20) return "what the hell!";
+
+            // Else just return that they are probably dead
+            return "you are probably dead";
+
+          }   
+
+      },
+      
+      // After view has mounted
+      mounted() {
+
+        // Get the high score from session storage
+        let highScore = sessionStorage.getItem( 'rsiHighScore' );
+
+        // Let this.highScore equal the highScore we just received as long as it is not null
+        if ( highScore !== null ) {
+            
+            // Set the high score to the high score we just received
+            this.highScore = highScore;
+
+        }
+
+      }
+
+    } ).mount( '#app' );
+
+  </script>
+
+</body>
+
+</html>
