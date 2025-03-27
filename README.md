@@ -1,5 +1,4 @@
-# rsiSpeedrun
-RSI Speedrun
+# RSI Speedrun
 
 This is a game where you click your mouse as fast as you can for 10 seconds. 
 
