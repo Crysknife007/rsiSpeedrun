@@ -1,6 +1,6 @@
 # RSI Speedrun
 
-[Screenshot] (https://github.com/Crysknife007/rsiSpeedrun/blob/main/screenShot.png)
+![Screenshot](https://github.com/Crysknife007/rsiSpeedrun/blob/main/screenShot.png)
 
 This is a game where you click your mouse as fast as you can for 10 seconds. 
 
