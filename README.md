@@ -1,5 +1,7 @@
 # RSI Speedrun
 
+[Screenshot] (https://github.com/Crysknife007/rsiSpeedrun/blob/main/screenShot.png)
+
 This is a game where you click your mouse as fast as you can for 10 seconds. 
 
 I wrote the basic foundation for this game nearly 20 years ago when I was first learing javascript.
@@ -17,3 +19,7 @@ I also ended up adding some new features, such as:
 - Restart functionality
 
 If anyone plays around with this please know I am not liable for any damages you cause to yourself or to your mouse. The game can be really hard on both of those things.
+
+If you want to play it I have it hosted on:
+
+http://spikesnell.com/rsi
